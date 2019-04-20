@@ -155,13 +155,13 @@ if __name__ == "__main__":
     #                     PAYOFF_SCALE, log=True, data=dataObject)
     #plot(dataObject['x'],dataObject['y'],x_name="Rounds",y_name="Collective Payoff",title="tag=32")
     series=[]
-    for l in [4,32,64]:
+    for l in [4,32]:
         allData = {'x': [], 'y': [], 'name': "Tag Quant={0}".format(l)}
-        for g in tqdm.tqdm(range(200,300,50)):
+        for g in [2000]:
             for s in range(1): #Collect multiple samples
                 dataObject = {'x': [], 'y': []}
                 result = tagMediatedEvolution(g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB,
-                                              TAG_MUTATION_PROB, log=False, data=dataObject)
+                                              TAG_MUTATION_PROB, log=True, data=dataObject)
                 allData['x'] = allData['x'] + dataObject['x']
                 allData['y'] = allData['y'] + dataObject['y']
         series.append(allData)
