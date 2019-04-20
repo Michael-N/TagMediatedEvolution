@@ -119,8 +119,8 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_QUANTITY,POPULATION_SIZE,STRATEGY_M
     population = [(Agent(TAG_QUANTITY,0) if i<(POPULATION_SIZE//2) else Agent(TAG_QUANTITY,1)) for i in range(POPULATION_SIZE)]
     random.shuffle(population)
     #Hales and Edmonds algorithm for evolution with tags
-    if log:
-        print("Computing Generations:")
+    #if log:
+    #    print("Computing Generations:")
     # Basically if do log then use tqdm to log progress else just return the range object
     progressLogger = tqdm.tqdm if log else lambda x:x
     for g in progressLogger(range(MAX_GENERATIONS)):#tqdm.tqdm(range(MAX_GENERATIONS)):
@@ -134,8 +134,8 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_QUANTITY,POPULATION_SIZE,STRATEGY_M
             a.randMutate(STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,TAG_QUANTITY)
         data['x'].append(g)
         data['y'].append(collectivePayoff(population))
-    if log:
-        print("Generations Complete")
+    #if log:
+     #   print("Generations Complete")
     return population
 
 #Collect population Statistics: Avg Payoff
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     series=[]
     for l in [4,32]:
         allData = {'x': [], 'y': [], 'name': "Tag Quant={0}".format(l)}
-        for g in [2000]:
+        for g in [2000]:#how many generations to compute
             for s in range(1): #Collect multiple samples
                 dataObject = {'x': [], 'y': []}
                 result = tagMediatedEvolution(g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB,
