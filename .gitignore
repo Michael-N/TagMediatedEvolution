@@ -1,3 +1,6 @@
 /.idea
 .idea/
 *.pdf
+*.dir
+*.dat
+*.bak
