@@ -18,14 +18,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #Plotting Code: Passed a series list [series1,series2] where series {name:"",x:[],y:[]}
+#NOTE! CAN ONLY PLOT 3 colors before it starts using random values for colors
 def plot(series,x_name="x",y_name="y",title="Graph"):#Code adapted from my chaotic IFS project
+    colors=[(70/255, 240/255, 240/255),(240/255, 50/255, 230/255),(210/255, 245/255, 60/255)]
     plt.title(title)
     plt.xlabel(x_name)
     plt.ylabel(y_name)
     idx = 0
+    r = random.random
     for group in series:
         # Plot the points
-        plt.scatter(group['x'], group['y'], c=[(random.random(),random.random(),random.random())],s=np.pi * 3, alpha=0.5, label=group['name'])
+        plt.scatter(group['x'], group['y'], c=[colors[idx] if idx<len(colors) else (r(),r(),r())],s=np.pi * 3, alpha=0.5, label=group['name'])
         idx += 1
     plt.legend(loc='upper left');
     plt.show()
