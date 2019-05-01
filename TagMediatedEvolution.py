@@ -21,7 +21,7 @@ class Agent:
         self.s=strategy
         # " Additionally, we divide the interval [0, 1] into subintervals of length δ called tag groups" ..
         #  there are 2^ l groups 1/δ =2^l ==> δ = 1/(2^l) ==> sub interval length... so
-        self.t = random.randint(0,math.pow(2,tagQuantity))* (1/math.pow(2,tagQuantity))# equivilant to 1/δ * N where n is an integer ==> random tag group...
+        self.t = random.randint(1,math.pow(2,tagQuantity))* (1/math.pow(2,tagQuantity))# equivilant to 1/δ * N where n is an integer ==> random tag group...
         self.p=0#Payoff
 
     #determines if two agent's tags match: returns true if so, false otherwise
@@ -60,7 +60,7 @@ class Agent:
     def randMutate(self,stratProb,tagProb,tagQuantity):
         #if the random number on [0,1] is gtr than the probability then remain same
         self.s = self.s if random.random()>stratProb else random.randint(0,1)
-        self.t = self.t if random.random()>tagProb else random.randint(0,math.pow(2,tagQuantity))*(1/math.pow(2,tagQuantity))
+        self.t = self.t if random.random()>tagProb else random.randint(1,math.pow(2,tagQuantity))*(1/math.pow(2,tagQuantity))
         # this is where the old code errored bc the order of rand and tag prob comparison was switched
 
     #sets the payoff for the agent
@@ -101,6 +101,7 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_QUANTITY,POPULATION_SIZE,STRATEGY_M
     # Basically if do log then use tqdm to log progress else just return the range object
     progressLogger = tqdm.tqdm if log else lambda x:x
     for g in progressLogger(range(MAX_GENERATIONS)):#tqdm.tqdm(range(MAX_GENERATIONS)):
+
         #calculate Payoffs
         for a in population:#Each agent only gets one chance at payoff but may interact with others multiple times
             #assign the payoff of an agent based upon selection and strategies detaied in the paper
@@ -124,4 +125,4 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_QUANTITY,POPULATION_SIZE,STRATEGY_M
 
 #Collect population Statistics: Avg Payoff
 def collectivePayoff(pop):
-    return sum([a.p for a in pop])
+    return sum([a.p for a in pop])/len(pop)

@@ -4,7 +4,9 @@ Code By Michael Sherif Naguib
 License: MIT
 Date: 4/12/19
 @University of Tulsa
-Description: Please read the description in main.py as it discusses the scope of the project and motivation.
+Description: (Multiprocessing and potential for Distributed computing)
+
+    Please read the description in main.py as it discusses the scope of the project and motivation.
             this code is responsible for distributing the computation amongst multiple computers in the hopes of gaining
             a speed boost on processing large quantities of data.... this is based on the dispy library
 '''
