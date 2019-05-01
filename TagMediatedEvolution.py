@@ -16,13 +16,14 @@ import math
 
 #Creates an agent:
 class Agent:
-    def __init__(self,tagLength,strategy):
+    def __init__(self,tagLength,strategy,payoffConstants):
         #Assign properties and  generate random tag...
         self.s=strategy
         # " Additionally, we divide the interval [0, 1] into subintervals of length δ called tag groups" ..
         #  there are 2^ l groups 1/δ =2^l ==> δ = 1/(2^l) ==> sub interval length... so
         self.t = random.randint(1,math.pow(2,tagLength))* (1/math.pow(2,tagLength))# equivilant to 1/δ * N where n is an integer ==> random tag group...
-        self.p=0#Payoff
+        self.p=0#Payoff of the individual
+        self.pc = payoffConstants
 
     #determines if two agent's tags match: returns true if so, false otherwise
     def tagsMatch(self,otherAgent):
@@ -43,7 +44,7 @@ class Agent:
     def determinePayoff(self,otherAgent):
         #T>R>P>S and 2R>T+S>2P
 
-        t,r,p,s=1.9,1.0,0.002,0.001
+        t,r,p,s= self.pc[0],self.pc[1],self.pc[2],self.pc[3]
         #t, r, p, s = 4,3,2,1
         # Agent A and B: Based on Prisoner's dilemma
         if self.s == otherAgent.s and self.s== 1: #Both cooperate
@@ -93,9 +94,9 @@ def stochasticUniversalSampeling(population,N_offspring):
     return RWS(population,pointers)
 
 #Tag Mediated Evolution Code! (returns the last generation of agents)
-def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,log=False,data={'x':[],'y':[]}):
+def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data={'x':[],'y':[]}):
     #Creates a list of agents where half have strategy 0=defect, and half 1=cooperate (NOTE! shuffled)
-    population = [(Agent(TAG_LENGTH,0) if i<(POPULATION_SIZE//2) else Agent(TAG_LENGTH,1)) for i in range(POPULATION_SIZE)]
+    population = [(Agent(TAG_LENGTH,0,PAYOFF_CONSTANTS) if i<(POPULATION_SIZE//2) else Agent(TAG_LENGTH,1,PAYOFF_CONSTANTS)) for i in range(POPULATION_SIZE)]
     random.shuffle(population)
     #Hales and Edmonds algorithm for evolution with tags
     # Basically if do log then use tqdm to log progress else just return the range object

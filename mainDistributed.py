@@ -33,24 +33,25 @@ def plot(series,x_name="x",y_name="y",title="Graph"):#Code adapted from my chaot
 def compute(args):
     try:
         import TagMediatedEvolution
-        g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB = args[0],args[1],args[2],args[3],args[4]
+        g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB, PAYOFF_CONSTANTS = args[0],args[1],args[2],args[3],args[4],args[5]
         dataObject = {'x': [], 'y': []}  # store the current data
-        TagMediatedEvolution.tagMediatedEvolution(g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB, log=False,data=dataObject)
+        TagMediatedEvolution.tagMediatedEvolution(g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data=dataObject)
         return dataObject
     except BaseException as e:
         return str(e)
 #Main code
 if __name__ == "__main__":
-
-    #Settings
-    POPULATION_SIZE=100               #Determines the size of the population
-    STRATEGY_MUTATION_PROB=0.1       #note 0.01 = 1%
-    TAG_MUTATION_PROB= 0.1           #Acts per individual tag! equiviliant to 0.01=1% here
-    TAG_LENGTHS_TO_COMPUTE = [4,32]   #Creates a series of data for that tag length
-    ROUNDS_GENERATIONS = range(100,500,20)      #Sets how many generations of each quantity are computed
-                                      #    ex. 300 gens are computed here [300,500] two seperate evolutions are computed
-                                      #    one for 300 and one for 500... data added into the same series
-    SAMPLES_PER_GEN_COUNT=1        # for any given generation size how many times that generation count should that be redone....
+    # ================== Settings =======================================================================================================================
+    POPULATION_SIZE=100                             #Determines the size of the population
+    STRATEGY_MUTATION_PROB=0.01                     #Sets tag mutation rate. note 0.01 = 1%
+    TAG_MUTATION_PROB= 0.01                         #Acts per individual tag! equiviliant to 0.01=1% here
+    TAG_LENGTHS_TO_COMPUTE = [4,32]                 #Creates a series of data for that tag length
+    ROUNDS_GENERATIONS = range(200,500,50)          #Sets how many generations of each quantity are computed
+                                                    #    ex. 300 gens are computed here [300,500] two seperate evolutions are computed
+                                                    #    one for 300 and one for 500... data added into the same series
+    SAMPLES_PER_GEN_COUNT=1                         #For any given generation size how many times that generation count should that be redone....
+    PAYOFF_CONSTANTS = [1.9, 1.0, 0.002,0.001]      #Sets the payoff constants for the prisoners dilemma:   [T,R,P,S]  where  T>R>P>S and 2R>T+S>2P
+    # ============== (END) Settings ===================================================================================================================
 
     #Distributes to the cluster... currently just takes advantage of the entire cpu core count... not networked yet...
     cluster = dispy.JobCluster(compute,depends=[TagMediatedEvolution])
@@ -64,7 +65,7 @@ if __name__ == "__main__":
         allData = {'x': [], 'y': [], 'name': "Tag Quant={0}".format(l)}
         for g in ROUNDS_GENERATIONS:
             for s in range(SAMPLES_PER_GEN_COUNT): #Collect multiple samples
-                job = cluster.submit([g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB])
+                job = cluster.submit([g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB,PAYOFF_CONSTANTS])
                 jobs.append(job)
         print("All Jobs Submitted: {0}".format(len(jobs)))
 
