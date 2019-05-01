@@ -126,4 +126,4 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUT
 
 #Collect population Statistics: Avg Payoff
 def collectivePayoff(pop):
-    return sum([a.p for a in pop])/len(pop)
+    return sum([a.p for a in pop])

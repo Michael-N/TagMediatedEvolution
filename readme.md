@@ -11,4 +11,10 @@ would converge to becoming Defectors vs Cooperators.
 - Recommended: use Anaconda
 - Deps: random, copy, tqdm, math, matplotlib, numpy
 
+## Info About the Code
+- ```main.py``` is base code for running the TagMediatedEvolution
+- ```mainDistributed.py``` is code for running the TagMediatedEvolution on multiple computers and processors (has issues and complex setup)
+- ```mainDistributed2.0.py ``` is code for running the TagMediatedEvolution on multiple processors 
+(if unsure which one to use use this one.... it is the fastest dev use and requires the least setup)
+
 Code By Michael Naguib 
