@@ -37,13 +37,13 @@ def plot(series,x_name="x",y_name="y",title="Graph"):#Code adapted from my chaot
 if __name__ == "__main__":
     #Settings
     POPULATION_SIZE=100               #Determines the size of the population
-    STRATEGY_MUTATION_PROB=0.1       #note 0.01 = 1%
-    TAG_MUTATION_PROB= 0.1           #Acts per individual tag! equiviliant to 0.01=1% here
+    STRATEGY_MUTATION_PROB=0.01       #note 0.01 = 1%
+    TAG_MUTATION_PROB= 0.01           #Acts per individual tag! equiviliant to 0.01=1% here
     TAG_LENGTHS_TO_COMPUTE = [4,32]   #Creates a series of data for that tag length
-    ROUNDS_GENERATIONS = range(0,500,50)      #Sets how many generations of each quantity are computed
+    ROUNDS_GENERATIONS = range(200,500,50)      #Sets how many generations of each quantity are computed
                                       #    ex. 300 gens are computed here [300,500] two seperate evolutions are computed
                                       #    one for 300 and one for 500... data added into the same series
-    SAMPLES_PER_GEN_COUNT=2         # for any given generation size how many times that generation count should that be redone....
+    SAMPLES_PER_GEN_COUNT=1         # for any given generation size how many times that generation count should that be redone....
 
     #Run the calculation
     #Stores all the seperate series of data to be plotted with differnet colors and names on the graph

@@ -23,12 +23,11 @@ class Agent:
         #  there are 2^ l groups 1/δ =2^l ==> δ = 1/(2^l) ==> sub interval length... so
         self.t = random.randint(0,math.pow(2,tagQuantity))* (1/math.pow(2,tagQuantity))# equivilant to 1/δ * N where n is an integer ==> random tag group...
         self.p=0#Payoff
-        #self.n = 1
 
     #determines if two agent's tags match: returns true if so, false otherwise
     def tagsMatch(self,otherAgent):
         #Floating point comparison
-        return math.isclose(self.t,otherAgent.t,abs_tol=0.00001)
+        return math.isclose(self.t,otherAgent.t,abs_tol=0.00000000001)
     def __eq__(self, otherAgent):
         return self.tagsMatch(otherAgent)
 
@@ -44,8 +43,8 @@ class Agent:
     def determinePayoff(self,otherAgent):
         #T>R>P>S and 2R>T+S>2P
 
-        #t,r,p,s=1.9,1.0,0.002,0.001
-        t, r, p, s = 4,3,2,1
+        t,r,p,s=1.9,1.0,0.002,0.001
+        #t, r, p, s = 4,3,2,1
         # Agent A and B: Based on Prisoner's dilemma
         if self.s == otherAgent.s and self.s== 1: #Both cooperate
             return r
@@ -67,7 +66,7 @@ class Agent:
     #sets the payoff for the agent
     def addToPayOff(self,val):
         self.p=val
-        #self.p= (self.p*self.n+val)/(self.n+1)
+
     #returns a string representaiton of the agent...
     def __str__(self):
         return "(TAG:{0},avePayoff:{1})".format(self.t,self.p)
@@ -106,15 +105,20 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_QUANTITY,POPULATION_SIZE,STRATEGY_M
         for a in population:#Each agent only gets one chance at payoff but may interact with others multiple times
             #assign the payoff of an agent based upon selection and strategies detaied in the paper
             a.addToPayOff(a.determinePayoff(a.findPartnerAgent(population)))
-            #a.n+=1
         #calculate next generation
         for a in population:
             a.randMutate(STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,TAG_QUANTITY)
         population = stochasticUniversalSampeling(population,len(population))
 
+        #Record the population data
         data['x'].append(g)
         data['y'].append(collectivePayoff(population))
 
+        #Reset the payoffs for the (next) generation
+        for a in population:
+            a.p=0
+
+        #Shuffle the population
         random.shuffle(population)
     return population
 
