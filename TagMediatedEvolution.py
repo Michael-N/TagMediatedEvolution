@@ -16,12 +16,12 @@ import math
 
 #Creates an agent:
 class Agent:
-    def __init__(self,tagQuantity,strategy):
+    def __init__(self,tagLength,strategy):
         #Assign properties and  generate random tag...
         self.s=strategy
         # " Additionally, we divide the interval [0, 1] into subintervals of length δ called tag groups" ..
         #  there are 2^ l groups 1/δ =2^l ==> δ = 1/(2^l) ==> sub interval length... so
-        self.t = random.randint(1,math.pow(2,tagQuantity))* (1/math.pow(2,tagQuantity))# equivilant to 1/δ * N where n is an integer ==> random tag group...
+        self.t = random.randint(1,math.pow(2,tagLength))* (1/math.pow(2,tagLength))# equivilant to 1/δ * N where n is an integer ==> random tag group...
         self.p=0#Payoff
 
     #determines if two agent's tags match: returns true if so, false otherwise
@@ -57,10 +57,10 @@ class Agent:
 
     #will randomly mutate strategy and tags based upon the supplied probabilities
     #it may not mutate the Agent at all!
-    def randMutate(self,stratProb,tagProb,tagQuantity):
+    def randMutate(self,stratProb,tagProb,tagLength):
         #if the random number on [0,1] is gtr than the probability then remain same
         self.s = self.s if random.random()>stratProb else random.randint(0,1)
-        self.t = self.t if random.random()>tagProb else random.randint(1,math.pow(2,tagQuantity))*(1/math.pow(2,tagQuantity))
+        self.t = self.t if random.random()>tagProb else random.randint(1,math.pow(2,tagLength))*(1/math.pow(2,tagLength))
         # this is where the old code errored bc the order of rand and tag prob comparison was switched
 
     #sets the payoff for the agent
@@ -93,9 +93,9 @@ def stochasticUniversalSampeling(population,N_offspring):
     return RWS(population,pointers)
 
 #Tag Mediated Evolution Code! (returns the last generation of agents)
-def tagMediatedEvolution(MAX_GENERATIONS,TAG_QUANTITY,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,log=False,data={'x':[],'y':[]}):
+def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,log=False,data={'x':[],'y':[]}):
     #Creates a list of agents where half have strategy 0=defect, and half 1=cooperate (NOTE! shuffled)
-    population = [(Agent(TAG_QUANTITY,0) if i<(POPULATION_SIZE//2) else Agent(TAG_QUANTITY,1)) for i in range(POPULATION_SIZE)]
+    population = [(Agent(TAG_LENGTH,0) if i<(POPULATION_SIZE//2) else Agent(TAG_LENGTH,1)) for i in range(POPULATION_SIZE)]
     random.shuffle(population)
     #Hales and Edmonds algorithm for evolution with tags
     # Basically if do log then use tqdm to log progress else just return the range object
@@ -108,7 +108,7 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_QUANTITY,POPULATION_SIZE,STRATEGY_M
             a.addToPayOff(a.determinePayoff(a.findPartnerAgent(population)))
         #calculate next generation
         for a in population:
-            a.randMutate(STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,TAG_QUANTITY)
+            a.randMutate(STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,TAG_LENGTH)
         population = stochasticUniversalSampeling(population,len(population))
 
         #Record the population data
