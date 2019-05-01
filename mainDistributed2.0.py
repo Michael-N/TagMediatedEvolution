@@ -21,7 +21,6 @@ Description: Please read the description in main.py as it discusses the scope of
 
 '''
 
-
 import multiprocessing as mp
 from TagMediatedEvolution import *
 import matplotlib.pyplot as plt
@@ -41,9 +40,10 @@ def plot(series,x_name="x",y_name="y",title="Graph"):#Code adapted from my chaot
     plt.legend(loc='upper left');
     plt.show()
 
-
+#the function which computes a single tagMediatedEvolution call... note some are longer compute time than others...
 def work(args):
     dataObject = {'x': [], 'y': []}  # store the current data
+    #unpack arguments
     g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB = args[0],args[1],args[2],args[3],args[4],
     tagMediatedEvolution(g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB, log=False,data=dataObject)
     return dataObject
@@ -73,11 +73,9 @@ if __name__ == "__main__":
             for s in range(SAMPLES_PER_GEN_COUNT): #Collect multiple samples
                 argList.append([g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB])
         #========== END
-        #Run the calculation
-        allDataObjects = pool.map(work,argList)
 
-        # append the current data to the series
-        for dataObject in allDataObjects:
+        #Run the calculation and log progress
+        for dataObject in tqdm.tqdm(pool.imap_unordered(work,argList),total=len(argList)):
             allData['x'] = allData['x'] + dataObject['x']
             allData['y'] = allData['y'] + dataObject['y']
         dataSeries.append(allData)
