@@ -24,6 +24,8 @@ class Agent:
         self.t = random.randint(1,math.pow(2,tagLength))* (1/math.pow(2,tagLength))# equivilant to 1/δ * N where n is an integer ==> random tag group...
         self.p=0#Payoff of the individual
         self.pc = payoffConstants
+        self.pa=0#payoff average for the individual
+        self.r=1#rounds played
     #determines if two agent's tags match: returns true if so, false otherwise
     def tagsMatch(self,otherAgent):
         #Floating point comparison
@@ -59,9 +61,10 @@ class Agent:
         self.s = self.s if random.random()>stratProb else random.randint(0,1)
         self.t = self.t if random.random()>tagProb else random.randint(1,math.pow(2,tagLength))*(1/math.pow(2,tagLength))
         # this is where the old code errored bc the order of rand and tag prob comparison was switched
-    #sets the payoff for the agent
+    #sets the payoff for the agent (also calculates the running ave payoff...
     def addToPayOff(self,val):
         self.p=val
+        self.ap = (self.r*self.pa + val)/(self.r+1)
     #returns a string representaiton of the agent...
     def __str__(self):
         return "(TAG:{0},avePayoff:{1})".format(self.t,self.p)
@@ -87,7 +90,7 @@ def stochasticUniversalSampeling(population,N_offspring):
     return RWS(population,pointers)
 
 #Tag Mediated Evolution Code! (returns the last generation of agents)
-def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data={'x':[],'y':[],'g':[]}):
+def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data={'x':[],'y':[],'g':[],'ap':[],'apg':[]}):
     #Creates a list of agents where half have strategy 0=defect, and half 1=cooperate (NOTE! shuffled)
     population = [(Agent(TAG_LENGTH,0,PAYOFF_CONSTANTS) if i<(POPULATION_SIZE//2) else Agent(TAG_LENGTH,1,PAYOFF_CONSTANTS)) for i in range(POPULATION_SIZE)]
     random.shuffle(population)
@@ -106,13 +109,15 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUT
         population = stochasticUniversalSampeling(population,len(population))
 
         #Record the population data
-        data['x'].append(g)
-        data['y'].append(collectivePayoff(population))
-        data['g'].append(countGroupsPopulation(population))
-
+        data['x'].append(g)#Generation index
+        data['y'].append(collectivePayoff(population))# Avg Population Value
+        data['g'].append(countGroupsPopulation(population))# number of groups in the population
+        data['ap'] = data['ap'] + [a.ap for a in population]# (running) average per individual in population
+        data['apg'] = data['apg']+ [g]*len(population)# ave per requires more inputs....
         #Reset the payoffs for the (next) generation
         for a in population:
             a.p=0
+            a.r+=1#increase 'rounds' it has been through...
 
         #Shuffle the population
         random.shuffle(population)
