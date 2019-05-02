@@ -48,7 +48,7 @@ def plot(series,x_name="x",y_name="y",title="Graph"):#Code adapted from my chaot
 
 #the function which computes a single tagMediatedEvolution call... note some are longer compute time than others...
 def work(args):
-    dataObject = {'x': [], 'y': []}  # store the current data
+    dataObject = {'x': [], 'y': [],'g':[]}  # store the current data
     #unpack arguments
     g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB,PAYOFF_CONSTANTS = args[0],args[1],args[2],args[3],args[4],args[5]
     tagMediatedEvolution(g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data=dataObject)
@@ -58,13 +58,13 @@ def work(args):
 if __name__ == "__main__":
     # ================== Settings =======================================================================================================================
     POPULATION_SIZE=100                             #Determines the size of the population
-    STRATEGY_MUTATION_PROB=0.01                     #Sets tag mutation rate. note 0.01 = 1%
-    TAG_MUTATION_PROB= 0.01                         #Acts per individual tag! equiviliant to 0.01=1% here
-    TAG_LENGTHS_TO_COMPUTE = [0,4,32]                 #Creates a series of data for that tag length
-    ROUNDS_GENERATIONS = range(200,2000,100)          #Sets how many generations of each quantity are computed
+    STRATEGY_MUTATION_PROB=0.1                     #Sets tag mutation rate. note 0.01 = 1%
+    TAG_MUTATION_PROB= 0.1                         #Acts per individual tag! equiviliant to 0.01=1% here
+    TAG_LENGTHS_TO_COMPUTE = [4,8,32]                 #Creates a series of data for that tag length
+    ROUNDS_GENERATIONS = range(200,600,100)          #Sets how many generations of each quantity are computed
                                                     #    ex. 300 gens are computed here [300,500] two seperate evolutions are computed
                                                     #    one for 300 and one for 500... data added into the same series
-    SAMPLES_PER_GEN_COUNT=1                         #For any given generation size how many times that generation count should that be redone....
+    SAMPLES_PER_GEN_COUNT=2                       #For any given generation size how many times that generation count should that be redone....
     PAYOFF_CONSTANTS = [1.9, 1.0, 0.002,0.001]      #Sets the payoff constants for the prisoners dilemma:   [T,R,P,S]  where  T>R>P>S and 2R>T+S>2P
     # ============== (END) Settings ===================================================================================================================
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     dataSeries=[]
     for l in TAG_LENGTHS_TO_COMPUTE:
         # this is 1 series to be added to all the series...
-        allData = {'x': [], 'y': [], 'name': "Tag Quant={0}".format(l)}
+        allData = {'x': [], 'y': [],'g':[],'name': "Tag Quant={0}".format(l)}
         #========== BUILDS THE arguments
         argList=[]
         for g in ROUNDS_GENERATIONS:
@@ -87,6 +87,7 @@ if __name__ == "__main__":
         for dataObject in tqdm.tqdm(pool.imap_unordered(work,argList),total=len(argList)):
             allData['x'] = allData['x'] + dataObject['x']
             allData['y'] = allData['y'] + dataObject['y']
+            allData['g'] = allData['g'] + dataObject['g']
         dataSeries.append(allData)
 
     #Plot the data

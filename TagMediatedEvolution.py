@@ -24,14 +24,12 @@ class Agent:
         self.t = random.randint(1,math.pow(2,tagLength))* (1/math.pow(2,tagLength))# equivilant to 1/δ * N where n is an integer ==> random tag group...
         self.p=0#Payoff of the individual
         self.pc = payoffConstants
-
     #determines if two agent's tags match: returns true if so, false otherwise
     def tagsMatch(self,otherAgent):
         #Floating point comparison
         return math.isclose(self.t,otherAgent.t,abs_tol=0.00000000001)
     def __eq__(self, otherAgent):
         return self.tagsMatch(otherAgent)
-
     #returns an agent that matches this agent's tag else a random one.
     def findPartnerAgent(self,population):
         random.shuffle(population)#Randomize the order of the population..
@@ -39,7 +37,6 @@ class Agent:
             if self.tagsMatch(agent):
                 return agent
         return population[random.randint(0,len(population)-1)]
-
     #looks at the strategies of each agent and determines the pay off for the agent calling this method
     def determinePayoff(self,otherAgent):
         #T>R>P>S and 2R>T+S>2P
@@ -55,7 +52,6 @@ class Agent:
             return t
         elif self.s==1 and otherAgent.s==0: #B defected and A cooperated
             return s
-
     #will randomly mutate strategy and tags based upon the supplied probabilities
     #it may not mutate the Agent at all!
     def randMutate(self,stratProb,tagProb,tagLength):
@@ -63,15 +59,12 @@ class Agent:
         self.s = self.s if random.random()>stratProb else random.randint(0,1)
         self.t = self.t if random.random()>tagProb else random.randint(1,math.pow(2,tagLength))*(1/math.pow(2,tagLength))
         # this is where the old code errored bc the order of rand and tag prob comparison was switched
-
     #sets the payoff for the agent
     def addToPayOff(self,val):
         self.p=val
-
     #returns a string representaiton of the agent...
     def __str__(self):
         return "(TAG:{0},avePayoff:{1})".format(self.t,self.p)
-
 #preforms universal stochastic sampeling of the population.... see https://en.wikipedia.org/wiki/Stochastic_universal_sampling
 def stochasticUniversalSampeling(population,N_offspring):
     # sum the payoffs
@@ -94,7 +87,7 @@ def stochasticUniversalSampeling(population,N_offspring):
     return RWS(population,pointers)
 
 #Tag Mediated Evolution Code! (returns the last generation of agents)
-def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data={'x':[],'y':[]}):
+def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUTATION_PROB,TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data={'x':[],'y':[],'g':[]}):
     #Creates a list of agents where half have strategy 0=defect, and half 1=cooperate (NOTE! shuffled)
     population = [(Agent(TAG_LENGTH,0,PAYOFF_CONSTANTS) if i<(POPULATION_SIZE//2) else Agent(TAG_LENGTH,1,PAYOFF_CONSTANTS)) for i in range(POPULATION_SIZE)]
     random.shuffle(population)
@@ -115,6 +108,7 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUT
         #Record the population data
         data['x'].append(g)
         data['y'].append(collectivePayoff(population))
+        data['g'].append(countGroupsPopulation(population))
 
         #Reset the payoffs for the (next) generation
         for a in population:
@@ -127,3 +121,13 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUT
 #Collect population Statistics: Avg Payoff
 def collectivePayoff(pop):
     return sum([a.p for a in pop])
+
+#Counts the number of different groups...
+def countGroupsPopulation(pop):
+    groups={}
+    for a in pop:
+        if str(a.t) not in groups:
+            groups[str(a.t)]=1
+        else:
+            groups[str(a.t)] += 1
+    return len(groups.keys())

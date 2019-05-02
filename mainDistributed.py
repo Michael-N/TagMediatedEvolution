@@ -37,7 +37,7 @@ def compute(args):
     try:
         import TagMediatedEvolution
         g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB, PAYOFF_CONSTANTS = args[0],args[1],args[2],args[3],args[4],args[5]
-        dataObject = {'x': [], 'y': []}  # store the current data
+        dataObject = {'x': [], 'y': [],'g':[]}  # store the current data
         TagMediatedEvolution.tagMediatedEvolution(g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB,PAYOFF_CONSTANTS,log=False,data=dataObject)
         return dataObject
     except BaseException as e:
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     dataSeries=[]
     for l in TAG_LENGTHS_TO_COMPUTE:
         # this is 1 series to be added to all the series...
-        allData = {'x': [], 'y': [], 'name': "Tag Quant={0}".format(l)}
+        allData = {'x': [], 'y': [],'g':[],'name': "Tag Quant={0}".format(l)}
         for g in ROUNDS_GENERATIONS:
             for s in range(SAMPLES_PER_GEN_COUNT): #Collect multiple samples
                 job = cluster.submit([g, l, POPULATION_SIZE, STRATEGY_MUTATION_PROB, TAG_MUTATION_PROB,PAYOFF_CONSTANTS])
@@ -80,6 +80,7 @@ if __name__ == "__main__":
                 # append the current data to the series
                 allData['x'] = allData['x'] + dataObject['x']
                 allData['y'] = allData['y'] + dataObject['y']
+                allData['g'] = allData['g'] + dataObject['g']
             except BaseException as e:
                 print(str(e))
 

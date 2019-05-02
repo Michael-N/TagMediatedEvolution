@@ -55,7 +55,7 @@ if __name__ == "__main__":
     dataSeries=[]
     for l in TAG_LENGTHS_TO_COMPUTE:
         # this is 1 series to be added to all the series...
-        allData = {'x': [], 'y': [], 'name': "Tag Quant={0}".format(l)}
+        allData = {'x': [], 'y': [],'g':[],'name': "Tag Quant={0}".format(l)}
         for g in ROUNDS_GENERATIONS:
             for s in range(SAMPLES_PER_GEN_COUNT): #Collect multiple samples
                 dataObject = {'x': [], 'y': []}#store the current data ... the function will copy data into it as it goes...
@@ -63,6 +63,7 @@ if __name__ == "__main__":
                 #append the current data to the series
                 allData['x'] = allData['x'] + dataObject['x']
                 allData['y'] = allData['y'] + dataObject['y']
+                allData['g'] = allData['g'] + dataObject['g']
         dataSeries.append(allData)
 
     #Plot the data
