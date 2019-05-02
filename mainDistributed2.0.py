@@ -18,10 +18,6 @@ Please read the description in main.py as it discusses the scope of the project 
             NOTE!
             number of processes count should be properly configured in the main code below
 
-            NOTE!
-            this is a bit slower than the dispy code... but the speed boost is still signifigant
-
-
 '''
 
 import multiprocessing as mp
