@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # ============== (END) Settings ===================================================================================================================
 
     #Run the calculation
-    pool = mp.Pool(processes=4)
+    pool = mp.Pool(processes=mp.cpu_count())
 
     #Stores all the seperate series of data to be plotted with differnet colors and names on the graph
     dataSeries=[]

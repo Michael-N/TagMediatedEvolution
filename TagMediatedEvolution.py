@@ -13,7 +13,7 @@ import random
 import copy
 import tqdm
 import math
-
+import uuid
 #Creates an agent:
 class Agent:
     def __init__(self,tagLength,strategy,payoffConstants):
@@ -24,8 +24,9 @@ class Agent:
         self.t = random.randint(1,math.pow(2,tagLength))* (1/math.pow(2,tagLength))# equivilant to 1/δ * N where n is an integer ==> random tag group...
         self.p=0#Payoff of the individual
         self.pc = payoffConstants
-        self.pa=0#payoff average for the individual
+        self.ap=0#payoff average for the individual
         self.r=1#rounds played
+        #self.id=uuid.uuid4()
     #determines if two agent's tags match: returns true if so, false otherwise
     def tagsMatch(self,otherAgent):
         #Floating point comparison
@@ -36,7 +37,7 @@ class Agent:
     def findPartnerAgent(self,population):
         random.shuffle(population)#Randomize the order of the population..
         for agent in population:
-            if self.tagsMatch(agent):
+            if self.tagsMatch(agent): #and not (self.id.int ==  agent.id.int):
                 return agent
         return population[random.randint(0,len(population)-1)]
     #looks at the strategies of each agent and determines the pay off for the agent calling this method
@@ -64,7 +65,7 @@ class Agent:
     #sets the payoff for the agent (also calculates the running ave payoff...
     def addToPayOff(self,val):
         self.p=val
-        self.ap = (self.r*self.pa + val)/(self.r+1)
+        self.ap = (self.r*self.ap + val)/(self.r+1)
     #returns a string representaiton of the agent...
     def __str__(self):
         return "(TAG:{0},avePayoff:{1})".format(self.t,self.p)
@@ -118,6 +119,7 @@ def tagMediatedEvolution(MAX_GENERATIONS,TAG_LENGTH,POPULATION_SIZE,STRATEGY_MUT
         for a in population:
             a.p=0
             a.r+=1#increase 'rounds' it has been through...
+            #a.id=uuid.uuid4()
 
         #Shuffle the population
         random.shuffle(population)
